@@ -1,5 +1,6 @@
 import AddDonationUseCase from "../Application/UseCase/AddDonationUseCase"
 import GetDonationsUseCase from "../Application/UseCase/GetAllDonationsUseCase"
+import ConfirmDonationUseCase from "../Application/UseCase/ConfirmDonationUseCase"
 
 import DonationMySQLRepository from "./Repository/DonationsRepositoryMySQL"
 
@@ -16,12 +17,15 @@ export const IntegrityService = new Integrity()
 
 import AddDonationController from "../Infrastructure/Controller/AddDonationController"
 import GetDonationsController from "./Controller/GetDonationsController"
+import ConfirmDonationController from "./Controller/ConfirmDonationController"
 
 export const MySqlDonationRepository = new DonationMySQLRepository();
 export const mysqldonation = MySqlDonationRepository
 
 export const addDonationUseCase = new AddDonationUseCase(mysqldonation);
 export const getDonationsUseCase = new GetDonationsUseCase(mysqldonation);
+export const confirmDonationUseCase = new ConfirmDonationUseCase(mysqldonation);
 
 export const addDonationController = new AddDonationController(addDonationUseCase);
 export const getDonationsController = new GetDonationsController(getDonationsUseCase);
+export const confirmDonationController = new ConfirmDonationController(confirmDonationUseCase);

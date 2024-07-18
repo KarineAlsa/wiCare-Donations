@@ -37,8 +37,34 @@ export default class UserMysqlRepository implements DonationsInterface {
       }
     }
   }
-  confirmDonation(id: number): Promise<Donation | any> {
-    throw new Error("Method not implemented.");
+  async confirmDonation(id: number): Promise<Donation | any> {
+    const sql = "UPDATE Donations SET status = 'Confirmed' WHERE id = ?";
+    const params = [id];
+    let connection;
+    try {
+      connection = await connection_pool.getConnection();
+      await connection.beginTransaction();
+      const [result]: any = await query(sql, params, connection);
+      if (result && result.affectedRows > 0) {
+        await connection.commit();
+        return {
+          id: id,
+          status: "Confirmed",
+        };
+      }
+      await connection.rollback();
+      return false;
+    } catch (error) {
+      if (connection) {
+        await connection.rollback();
+      }
+      console.error("Error al confirmar donación:", error);
+      return false;
+    } finally {
+      if (connection) {
+        connection.release();
+      }
+    }
   }
 
   async getDonations(): Promise<Donation[] | any> {
