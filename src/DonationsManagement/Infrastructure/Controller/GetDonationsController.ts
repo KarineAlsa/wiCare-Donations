@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import  GetAllDonationsUseCase  from "../../Application/UseCase/GetAllDonationsUseCase";
+import sendMessageAndWaitForResponse from "../Service/SagaMessaging";
 
 export default class GetDonationsController {
 
@@ -10,8 +11,20 @@ export default class GetDonationsController {
         try {
             
             let donatino = await this.useCase.run();
+
             if (donatino) {
-                return response.status(200).json({data:donatino,message:"All donations",success:true});
+                let donation = await sendMessageAndWaitForResponse("getAllDonations",donatino)
+                if (donation) {
+                    return response.status(200).json({data:donation,message:"All donations",success:true});
+                }
+                else {
+                    response.status(400).send({
+                        
+                        message: "No se pudo recuperar donaciones",
+                        success: false,
+                    });
+                }
+
             } else {
                 response.status(400).send({
                     
