@@ -19,7 +19,7 @@ export default class AddBankAccountController {
             
             let donatino = await this.useCase.run({
                 id_company: Number(company_id),
-                status: "Pendient",
+                status: "Pending",
                 id_association: Number(association_id)
             });
             if (donatino) {

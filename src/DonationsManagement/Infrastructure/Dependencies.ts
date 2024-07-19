@@ -2,6 +2,7 @@ import AddDonationUseCase from "../Application/UseCase/AddDonationUseCase"
 import GetDonationsUseCase from "../Application/UseCase/GetAllDonationsUseCase"
 import ConfirmDonationUseCase from "../Application/UseCase/ConfirmDonationUseCase"
 import GetAssociationDonationsConfirmedUseCase from "../Application/UseCase/GetAssociationDonationsConfirmedUseCase"
+import GetAssociationDonationsPendingsUseCase from "../Application/UseCase/GetAssociationDonationsPendingsUseCase"
 
 import DonationMySQLRepository from "./Repository/DonationsRepositoryMySQL"
 
@@ -20,6 +21,7 @@ import AddDonationController from "../Infrastructure/Controller/AddDonationContr
 import GetDonationsController from "./Controller/GetDonationsController"
 import ConfirmDonationController from "./Controller/ConfirmDonationController"
 import GetAssociationDonationsConfirmedController from "./Controller/GetAssociationsDonationsConfirmedController"
+import GetAssociationDonationsPendingsController from "./Controller/GetAssociationDonationsPendingsController"
 
 export const MySqlDonationRepository = new DonationMySQLRepository();
 export const mysqldonation = MySqlDonationRepository
@@ -28,8 +30,10 @@ export const addDonationUseCase = new AddDonationUseCase(mysqldonation);
 export const getDonationsUseCase = new GetDonationsUseCase(mysqldonation);
 export const confirmDonationUseCase = new ConfirmDonationUseCase(mysqldonation);
 export const getAssociationDonationsConfirmedUseCase = new GetAssociationDonationsConfirmedUseCase(mysqldonation);
+export const getAssociationDonationsPendingsUseCase = new GetAssociationDonationsPendingsUseCase(mysqldonation);
 
 export const addDonationController = new AddDonationController(addDonationUseCase);
 export const getDonationsController = new GetDonationsController(getDonationsUseCase);
 export const confirmDonationController = new ConfirmDonationController(confirmDonationUseCase);
 export const getAssociationDonationsConfirmedController = new GetAssociationDonationsConfirmedController(getAssociationDonationsConfirmedUseCase);
+export const getAssociationDonationsPendingsController = new GetAssociationDonationsPendingsController(getAssociationDonationsPendingsUseCase);

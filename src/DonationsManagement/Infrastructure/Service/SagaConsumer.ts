@@ -1,6 +1,7 @@
 import * as amqp from 'amqplib';
 import dotenv from 'dotenv';
-import {getAssociationDonationsConfirmedUseCase} from '../Dependencies';
+import {getAssociationDonationsConfirmedUseCase, getAssociationDonationsPendingsUseCase} from '../Dependencies';
+
 dotenv.config();
 
 
@@ -21,6 +22,7 @@ export const consumeMessages = async () => {
     
         const queues = [
             { name: 'get_donations_association_confirmed_queue', bindingKey: 'getDonationsOfAssociation', handler: handleGetDonationsAssociation },
+            { name: 'get_donations_association_pendings_queue', bindingKey: 'getDonationsOfAssociationPendings', handler: handleGetDonationsAssociationPendings },
         ];
         for (const queue of queues) {
             await channel.assertQueue(queue.name, { durable: false });
@@ -68,3 +70,14 @@ const handleGetDonationsAssociation = async (message: any) => {
         
     }
 
+const handleGetDonationsAssociationPendings = async (message: any) => {
+            
+    try {
+        console.log('message', message.associationId);
+        const donations = await getAssociationDonationsPendingsUseCase.run(message.associationId);
+        return donations;
+    } catch (error:any) {
+        console.error(`Error getting donations:`, error.message);
+    }
+    
+}
