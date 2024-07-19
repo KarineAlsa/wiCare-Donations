@@ -5,6 +5,31 @@ import { connection_pool } from "../../Database/mysql";
 
 
 export default class UserMysqlRepository implements DonationsInterface {
+  async getDonationsAssociationConfirmed(association_id: number): Promise<Donation[] | any> {
+    const sql = "SELECT * FROM Donations WHERE id_association = ? AND status = 'Confirmed'";
+    const params = [association_id];
+    let connection;
+    try {
+      connection = await connection_pool.getConnection();
+      const [result]: any = await query(sql, params, connection);
+      if (result.length === 0) {
+        await connection.release();
+        return false;
+      }
+      return result;
+    } catch (error) {
+      console.error("Error al obtener donaciones confirmadas de la asociación:", error);
+      if (connection) {
+        await connection.release();
+      }
+      
+    } finally {
+      if (connection) {
+        connection.release();
+        console.log("Conexión cerrada");
+      }
+    }
+  }
   async addDonation(donation: Donation): Promise<Donation | any> {
     const sql = "INSERT INTO Donations (id_company, status, id_association) VALUES (?, ?, ?)";
     const params = [donation.id_company, donation.status, donation.id_association];
@@ -24,10 +49,12 @@ export default class UserMysqlRepository implements DonationsInterface {
         };
       }
       await connection.rollback();
+      await connection.release();
       return false;
     } catch (error) {
       if (connection) {
         await connection.rollback();
+        await connection.release();
       }
       console.error("Error al agregar donación:", error);
       return false;

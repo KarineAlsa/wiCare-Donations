@@ -6,4 +6,5 @@ export default interface DonationsInterface {
     getDonations(): Promise<Donation[]|any>;
     getDonationsbyCompany(company_id:number): Promise<Donation[]|any>;
     getDonationstoAssociation(association_id:number): Promise<Donation[]|any>;
+    getDonationsAssociationConfirmed(association_id:number): Promise<Donation[]|any>;
     }

@@ -1,5 +1,6 @@
 import * as amqp from 'amqplib';
 import dotenv from 'dotenv';
+import {getAssociationDonationsConfirmedUseCase} from '../Dependencies';
 dotenv.config();
 
 
@@ -19,9 +20,7 @@ export const consumeMessages = async () => {
         await channel.assertExchange(exchange, 'direct', { durable: false });
     
         const queues = [
-            { name: 'get_allevents_queue', bindingKey: 'getAllEvents', handler: handleGetEvents },
-            { name: 'get_volunteer_queue', bindingKey: 'getEventVolunteers', handler: handleGetVolunteers },
-            { name: 'get_event_by_id', bindingKey: 'getEventById', handler: handleEventId}
+            { name: 'get_donations_association_confirmed_queue', bindingKey: 'getDonationsOfAssociation', handler: handleGetDonationsAssociation },
         ];
         for (const queue of queues) {
             await channel.assertQueue(queue.name, { durable: false });
@@ -55,43 +54,17 @@ const handleMessage = async (handler: Function, message: any, replyTo: string, c
     } catch (error: any) {
         console.error(`Error handling message:`, error.message);
     }
-};
+}
 
-const handleGetEvents = async (message: any) => {
-    
-    try {
 
-        for (const event of message) {
-            }
+const handleGetDonationsAssociation = async (message: any) => {
         
-        return message ;
-    } catch (error:any) {
-        console.error(`Error getting events:`, error.message);
-    }
-    
-};
-
-const handleGetVolunteers = async (message: any) => {
-    
-    try {
-
-        for (const volunteer of message) {
-            }
-        return message;
-    } catch (error:any) {
-        console.error(`Error getting volunteers:`, error.message);
-    }
-    
-};
-
-const handleEventId = async (message: any) => {
-    
-    try {
+        try {
+            const donations = await getAssociationDonationsConfirmedUseCase.run(message.associationId);
+            return donations;
+        } catch (error:any) {
+            console.error(`Error getting donations:`, error.message);
+        }
         
-        return message ;
-    } catch (error:any) {
-        console.error(`Error getting events:`, error.message);
     }
-    
-};
 
