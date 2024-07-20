@@ -5,6 +5,32 @@ import { connection_pool } from "../../Database/mysql";
 
 
 export default class UserMysqlRepository implements DonationsInterface {
+  async rankingDonations(): Promise<Donation[] | any> {
+    const sql = `SELECT id_company, COUNT(*) AS total_donaciones FROM Donations WHERE status = 'Confirmed'
+                  GROUP BY id_company ORDER BY total_donaciones DESC;`;
+    const params: any[] = [];
+    let connection;
+    try {
+      connection = await connection_pool.getConnection();
+      const [result]: any = await query(sql, params, connection);
+      if (result.length === 0) {
+        await connection.release();
+        return false;
+      }
+      await connection.release();
+      return result;
+    } catch (error) {
+      console.error("Error al obtener donaciones:", error);
+      if (connection) {
+        await connection.release();
+      }
+    } finally {
+      if (connection) {
+        connection.release();
+        console.log("Conexión cerrada");
+      }
+    }
+  }
   async getDonationsAssociationPendings(association_id: number): Promise<Donation[] | any> {
     const sql = "SELECT * FROM Donations WHERE id_association = ? AND status = 'Pending'";
     const params = [association_id];

@@ -8,4 +8,5 @@ export default interface DonationsInterface {
     getDonationstoAssociation(association_id:number): Promise<Donation[]|any>;
     getDonationsAssociationConfirmed(association_id:number): Promise<Donation[]|any>;
     getDonationsAssociationPendings(association_id:number): Promise<Donation[]|any>;
+    rankingDonations(): Promise<Donation[]|any>;
     }
